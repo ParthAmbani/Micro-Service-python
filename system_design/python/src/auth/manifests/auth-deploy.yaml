@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    app: auth
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - image: parthambani/auth
+        name: auth
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "256Mi" # Minimum memory required
+            cpu: "250m"     # Minimum CPU required (250 millicores)
+          limits:
+            memory: "512Mi" # Maximum memory allowed
+            cpu: "500m"     # Maximum CPU allowed
+        envFrom:
+        - configMapRef:
+            name: auth-config
+        - secretRef:
+            name: auth-secret

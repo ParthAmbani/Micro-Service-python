@@ -1,0 +1,84 @@
+# window for all microservice
+python -m venv env_name
+env_name\Scripts\activate
+# On macOS/Linux:
+source env_name/bin/activate
+
+pip install package_name
+pip freeze > requirements.txt
+
+
+pip install -r requirements.txt
+
+
+
+# Start Minikube
+minikube start
+minikube addons enable ingress
+
+# After running minikube tunnel, any services of type LoadBalancer should be accessible on the local machine.
+minikube tunnel
+
+# Kubernetes: Apply the configuration
+kubectl apply -f ./
+
+# Kubernetes: Delete resources based on the configuration
+kubectl delete -f ./
+
+# Kubernetes: Scale down a deployment to zero replicas
+kubectl scale deployment gateway --replicas=0
+
+# Kubernetes: Delete a specific ingress resource with a tag
+kubectl delete ingress gateway-ingress -n default
+
+# Kubernetes: Get the list of pods
+kubectl get pods
+
+# Kubernetes: Get detailed information about a specific pod (replace 'rabbirmq-0' with the actual pod name)
+kubectl describe pod rabbirmq-0
+
+# Kubernetes: Get the status of a StatefulSet (replace 'rabbirmq' with the actual StatefulSet name)
+kubectl get statefulset rabbirmq
+
+# Kubernetes: Get detailed information about a StatefulSet (replace 'rabbirmq' with the actual StatefulSet name)
+kubectl describe statefulset rabbirmq
+
+# Docker: Build an image from the Dockerfile in the current directory
+docker build -t <image-name>:<tag> .
+
+# Docker: Add a tag to an existing image
+docker tag <source-image-id> <repository>:<tag>
+# Example:
+docker tag 2c4d1a1fe8b1494eea3521f297e02bbd543ce1ea549061df2c554488f678eba1 parthambani/gateway:latest
+
+# Docker: Push an image to a repository
+docker push <repository>:<tag>
+# Example:
+docker push parthambani/gateway:latest
+
+
+
+
+# get the pod and also there log gateway-5fdd5d479f-4ng4v  is pod name 
+kubectl get pods 
+kubectl logs gateway-5fdd5d479f-4ng4v
+
+172.23.209.98
+
+#1. Install the NGINX Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+#2. Verify the NGINX Ingress Controller Installation
+kubectl get pods -n ingress-nginx
+#################
+NAME                                        READY   STATUS    RESTARTS   AGE
+ingress-nginx-controller-XXXXX              1/1     Running   0          2m
+#################
+
+#3. Expose the Ingress Controller
+kubectl get svc -n ingress-nginx
+#################
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller   LoadBalancer   10.96.170.236    <pending>     80:30619/TCP,443:32150/TCP   3m
+#################
+
