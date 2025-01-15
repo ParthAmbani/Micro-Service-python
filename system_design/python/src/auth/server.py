@@ -10,7 +10,7 @@ server.config["MYSQL_HOST"] = os.environ.get("MYSQL_HOST")
 server.config["MYSQL_USER"] = os.environ.get("MYSQL_USER")
 server.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD")
 server.config["MYSQL_DB"] = os.environ.get("MYSQL_DB")
-server.config["MYSQL_PORT"] = os.environ.get("MYSQL_PORT")
+server.config["MYSQL_PORT"] = int(os.environ.get("MYSQL_PORT"))
 
 
 # Route configuration
@@ -22,17 +22,17 @@ def login():
     
     #check for username and password in DB.
     cur = mysql.connection.cursor()
-    res = cur.execute("SELECT email,password FROM user WHERE email=%s", (auth.usename,))
+    res = cur.execute("SELECT email,password FROM user WHERE email=%s", (auth.username,))
 
     if res > 0:
         user_row = cur.fetchone()
         email = user_row[0]
         password = user_row[1]
 
-        if auth.username != email and auth.password != password:
+        if auth.username != email or auth.password != password:
             return "Invalid username or password", 401
         else:
-            return createJWT(auth.username, os.env.get("JWT_SECRET"),True)
+            return createJWT(auth.username, os.environ.get("JWT_SECRET"),True)
     else:
         return "invalid credentials" , 401
     
@@ -45,7 +45,7 @@ def validate():
     encoded_jwt = encoded_jwt.strip(" ")
 
     try:
-        decoded = jwt.decode(encoded_jwt,os.environ.get("JWT_SECRET"), algorithms=["HS256"])
+        decoded = jwt.decode(encoded_jwt, os.environ.get("JWT_SECRET"), algorithms=["HS256"])
     except:
         return "not authorized", 403
     
@@ -55,10 +55,10 @@ def validate():
 def createJWT(username, secret, authz):
     return jwt.encode(
         {
-        "username": username,
-        "exp": datetime.datetime.now(tz=datetime.datetime.utc) + datetime.timedelta(days=1),
-        "iat": datetime.datetime.now(tz=datetime.datetime.utc),
-        "admin": authz,
+            "username": username,
+            "exp": datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(days=1),
+            "iat": datetime.datetime.now(tz=datetime.timezone.utc),
+            "admin": authz,
         },
         secret,
         algorithm="HS256",
