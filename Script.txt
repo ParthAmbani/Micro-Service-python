@@ -1,3 +1,14 @@
+mysql -u root -p < /path/to/auth_database.sql
+# Verify 
+SHOW DATABASES;
+
+USE auth;
+SHOW TABLES;
+
+SELECT * FROM user;
+######
+
+
 # window for all microservice
 python -m venv env_name
 env_name\Scripts\activate
