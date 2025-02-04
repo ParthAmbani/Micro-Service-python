@@ -1,1 +1,8 @@
 curl -X POST http://mp3converter.com/login -u admin@email.com:admin23
+
+curl -X POST -v -F 'file=@./test.mp4' -H 'Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluQGVtYWlsLmNvbSIsImV4cCI6MTczNzk1ODQ2MSwiaWF0IjoxNzM3ODcyMDYxLCJhZG1pbiI6dHJ1ZX0.jqNroNG9VdxY7FwTiYri29FK-qrEHgt2BD7F4Wxi4Zg' http://mp3converter.com/upload
+
+
+
+
+

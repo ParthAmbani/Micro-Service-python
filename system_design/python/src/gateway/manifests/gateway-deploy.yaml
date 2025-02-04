@@ -17,6 +17,7 @@ spec:
       labels:
         app: gateway
     spec:
+      hostNetwork: true
       containers:
       - name: gateway
         image:  parthambani/gateway

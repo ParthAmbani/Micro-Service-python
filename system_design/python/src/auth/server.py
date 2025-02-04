@@ -32,23 +32,33 @@ def login():
         if auth.username != email or auth.password != password:
             return "Invalid username or password", 401
         else:
-            return createJWT(auth.username, os.environ.get("JWT_SECRET"),True)
+            return createJWT(auth.username, os.environ.get("JWT_SECRET"), True)
     else:
         return "invalid credentials" , 401
     
 @server.route("/validate", methods=["POST"])
 def validate():
-    encoded_jwt = request.headers["Authorization"]
+    # Get the Authorization header
+    encoded_jwt = request.headers.get("Authorization")
     if not encoded_jwt:
         return "missing credentials", 401
     
-    encoded_jwt = encoded_jwt.strip(" ")
-
-    try:
-        decoded = jwt.decode(encoded_jwt, os.environ.get("JWT_SECRET"), algorithms=["HS256"])
-    except:
-        return "not authorized", 403
+    # Remove "Bearer " prefix if present
+    if encoded_jwt.startswith("Bearer "):
+        encoded_jwt = encoded_jwt[7:].strip()
     
+    try:
+        # Decode the JWT
+        decoded = jwt.decode(encoded_jwt, os.environ.get("JWT_SECRET"), algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        return "token expired", 403
+    except jwt.InvalidTokenError:
+        return "invalid token", 403
+    except Exception as e:
+        # Handle unexpected exceptions
+        return f"unexpected error: {str(e)}", 500
+    
+    # Return decoded JWT on success
     return decoded, 200
 
     
